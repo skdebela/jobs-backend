@@ -15,6 +15,7 @@ import java.time.temporal.ChronoUnit;
 public class TestDataUtil {
     public static Company createTestCompany() {
         return Company.builder()
+                .id(1)
                 .name("Amazon")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.amazon.com")
@@ -24,6 +25,7 @@ public class TestDataUtil {
 
     public static Company createTestCompany2() {
         return Company.builder()
+                .id(2)
                 .name("Google")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.google.com")
@@ -33,6 +35,7 @@ public class TestDataUtil {
 
     public static Company createTestCompany3() {
         return Company.builder()
+                .id(3)
                 .name("Apple")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.apple.com")
@@ -42,6 +45,7 @@ public class TestDataUtil {
 
     public static Company createTestCompany4() {
         return Company.builder()
+                .id(4)
                 .name("Queen's Supermarket")
                 .industry(Industry.RETAIL)
                 .website("https://www.queens.com")
@@ -51,6 +55,7 @@ public class TestDataUtil {
 
     public static CompanyDto createTestCompanyDto() {
         return CompanyDto.builder()
+                .id(1)
                 .name("Amazon")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.amazon.com")
@@ -60,6 +65,7 @@ public class TestDataUtil {
 
     public static CompanyDto createTestCompany2Dto() {
         return CompanyDto.builder()
+                .id(2)
                 .name("Google")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.google.com")
@@ -69,6 +75,7 @@ public class TestDataUtil {
 
     public static Job createTestJob(final Company company) {
         return Job.builder()
+                .id(1)
                 .title("Software Engineer")
                 .company(company)
                 .postedAt(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
@@ -82,6 +89,7 @@ public class TestDataUtil {
 
     public static Job createTestJob2(final Company company) {
         return Job.builder()
+                .id(2)
                 .title("Accountant")
                 .company(company)
                 .postedAt(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
