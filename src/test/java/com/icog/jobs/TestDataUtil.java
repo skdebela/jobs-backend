@@ -3,6 +3,14 @@ package com.icog.jobs;
 import com.icog.jobs.company.dtos.CompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.company.models.Industry;
+import com.icog.jobs.job.enums.ExperienceLevel;
+import com.icog.jobs.job.enums.JobStatus;
+import com.icog.jobs.job.enums.JobType;
+import com.icog.jobs.job.enums.WorkMode;
+import com.icog.jobs.job.models.Job;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class TestDataUtil {
     public static Company createTestCompany() {
@@ -59,4 +67,29 @@ public class TestDataUtil {
                 .build();
     }
 
+    public static Job createTestJob(final Company company) {
+        return Job.builder()
+                .title("Software Engineer")
+                .company(company)
+                .postedAt(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
+                .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
+                .type(JobType.FULL_TIME)
+                .workMode(WorkMode.HYBRID)
+                .status(JobStatus.ACTIVE)
+                .description("Software Engineer with focus in System Engineering")
+                .build();
+    }
+
+    public static Job createTestJob2(final Company company) {
+        return Job.builder()
+                .title("Accountant")
+                .company(company)
+                .postedAt(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS))
+                .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
+                .type(JobType.PART_TIME)
+                .workMode(WorkMode.HYBRID)
+                .status(JobStatus.ACTIVE)
+                .description("Part time accountant needed in entry level experience.")
+                .build();
+    }
 }

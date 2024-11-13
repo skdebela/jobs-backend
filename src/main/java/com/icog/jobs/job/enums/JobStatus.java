@@ -1,4 +1,4 @@
-package com.icog.jobs.job.models;
+package com.icog.jobs.job.enums;
 
 public enum JobStatus {
     ACTIVE,

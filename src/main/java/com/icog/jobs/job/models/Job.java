@@ -1,10 +1,13 @@
 package com.icog.jobs.job.models;
 
+import com.icog.jobs.company.models.Company;
 import com.icog.jobs.job.enums.ExperienceLevel;
+import com.icog.jobs.job.enums.JobStatus;
 import com.icog.jobs.job.enums.JobType;
 import com.icog.jobs.job.enums.WorkMode;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "job")
 public class Job {
@@ -22,7 +26,10 @@ public class Job {
 
     private String title;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
     private LocalDateTime postedAt;
 
     @Enumerated(EnumType.STRING)
