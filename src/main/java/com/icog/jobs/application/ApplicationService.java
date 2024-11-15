@@ -42,6 +42,7 @@ public class ApplicationService {
     public Application updateStatus(Integer applicationId, ApplicationStatus status) {
         Optional<Application> foundApplication = applicationRepository.findById(applicationId);
         return foundApplication.map(application -> {
+                    application.setStatus(status);
                     return applicationRepository.save(application);
                 }
         ).orElseThrow(() -> new NotFoundException("Application not found"));

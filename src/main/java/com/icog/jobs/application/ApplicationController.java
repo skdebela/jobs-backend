@@ -46,7 +46,7 @@ public class ApplicationController {
     })
     @PostMapping(path = "/api/jobs/{id}/apply")
     ResponseEntity<ApplicationDto> createApplication(
-            @PathParam("id") Integer jobId,
+            @PathVariable("id") Integer jobId,
             @RequestBody ApplicationDto applicationDto
     ) {
         Optional<Job> foundJob = jobService.findOne(jobId);
@@ -69,7 +69,7 @@ public class ApplicationController {
     })
     @GetMapping(path = "/api/jobs/{id}/applications")
     ResponseEntity<List<ApplicationDto>> getApplications(
-            @PathParam("id") Integer jobId
+            @PathVariable("id") Integer jobId
     ) {
         Optional<Job> foundJob = jobService.findOne(jobId);
         return foundJob.map(job -> {
@@ -89,7 +89,7 @@ public class ApplicationController {
     })
     @GetMapping(path = "/api/jobs/{jobId}/applications/{applicationId}")
     ResponseEntity<ApplicationDto> getApplication(
-            @PathParam("applicationId") Integer applicationId
+            @PathVariable("applicationId") Integer applicationId
     ) {
         Optional<Application> foundApplication = applicationService.findOne(applicationId);
         return foundApplication.map(application -> {
@@ -100,24 +100,38 @@ public class ApplicationController {
 
     @Operation(
             summary = "Update application status.",
-            description = ""
+            description = "Updates the status of a job application."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Application status successfully updated."),
-            @ApiResponse(responseCode = "404", description = "Job not found.")
+            @ApiResponse(responseCode = "404", description = "Application not found.")
     })
     @PatchMapping(path = "/api/jobs/{jobId}/applications/{applicationId}/status")
-    ResponseEntity<ApplicationDto> updateApplicationStatus(
-            @PathParam("jobId") Integer jobId,
-            @PathParam("applicationId") Integer applicationId,
-            @RequestBody Map<String, ApplicationStatus> applicationStatus
+    public ResponseEntity<ApplicationDto> updateApplicationStatus(
+            @PathVariable("applicationId") Integer applicationId,
+            @RequestBody Map<String, String> applicationStatus
     ) {
-        Optional<Job> foundJob = jobService.findOne(jobId);
-        return foundJob.map(job -> {
-            ApplicationStatus status = applicationStatus.get("status");
-            Application application = applicationService.updateStatus(applicationId, status);
-            ApplicationDto savedApplicationDto = applicationMapper.mapTo(application);
-            return new ResponseEntity<>(savedApplicationDto, HttpStatus.OK);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (!applicationStatus.containsKey("status")) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        String statusValue = applicationStatus.get("status");
+        ApplicationStatus status;
+        try {
+            status = ApplicationStatus.valueOf(statusValue);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Application> foundApplication = applicationService.findOne(applicationId);
+        if (foundApplication.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Application application = foundApplication.get();
+        application = applicationService.updateStatus(applicationId, status);
+        ApplicationDto savedApplicationDto = applicationMapper.mapTo(application);
+        return new ResponseEntity<>(savedApplicationDto, HttpStatus.OK);
     }
+
 }
