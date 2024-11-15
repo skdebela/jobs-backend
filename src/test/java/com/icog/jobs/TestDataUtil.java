@@ -1,5 +1,9 @@
 package com.icog.jobs;
 
+import com.icog.jobs.application.enums.ApplicationStatus;
+import com.icog.jobs.application.enums.EducationLevel;
+import com.icog.jobs.application.enums.Gender;
+import com.icog.jobs.application.models.Application;
 import com.icog.jobs.company.dtos.CompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.company.models.Industry;
@@ -9,6 +13,7 @@ import com.icog.jobs.job.enums.JobType;
 import com.icog.jobs.job.enums.WorkMode;
 import com.icog.jobs.job.models.Job;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -98,6 +103,22 @@ public class TestDataUtil {
                 .workMode(WorkMode.HYBRID)
                 .status(JobStatus.ACTIVE)
                 .description("Part time accountant needed in entry level experience.")
+                .build();
+    }
+
+    public static Application createTestApplication(Job job) {
+        return Application.builder()
+                .id(1)
+                .applicantName("Abebe Bikila")
+                .applicantEmail("abebe@gmail.com")
+                .applicantPhone("0989883210")
+                .applicantGender(Gender.MALE)
+                .applicantAddress("Addis Ababa, Ethiopia")
+                .applicantExperienceLevel(ExperienceLevel.SENIOR_LEVEL)
+                .applicantBirthDate(LocalDate.now())
+                .applicantEducationLeve(EducationLevel.PHD)
+                .job(job)
+                .status(ApplicationStatus.SUBMITTED)
                 .build();
     }
 }
