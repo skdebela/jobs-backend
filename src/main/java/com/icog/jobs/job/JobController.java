@@ -1,7 +1,11 @@
 package com.icog.jobs.job;
 
 import com.icog.jobs.Mapper;
+import com.icog.jobs.company.models.Industry;
 import com.icog.jobs.job.dtos.JobDto;
+import com.icog.jobs.job.enums.ExperienceLevel;
+import com.icog.jobs.job.enums.JobType;
+import com.icog.jobs.job.enums.WorkMode;
 import com.icog.jobs.job.models.Job;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,8 +31,19 @@ public class JobController {
             description = "Fetch all companies, an empty list if no company found.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved jobs.")
     @GetMapping(path = "/api/jobs")
-    ResponseEntity<List<JobDto>> getJobs() {
-        List<Job> jobs = jobService.findAll();
+    ResponseEntity<List<JobDto>> getJobs(
+            @RequestParam(required = false) Industry industry,
+            @RequestParam(required = false) ExperienceLevel experienceLevel,
+            @RequestParam(required = false) JobType type,
+            @RequestParam(required = false) WorkMode workMode,
+            @RequestParam(required = false) String query
+            ) {
+        List<Job> jobs;
+        if (industry != null || experienceLevel != null || type != null || workMode != null || query != null) {
+            jobs = jobService.searchAndFilter(industry, experienceLevel, type, workMode, query);
+        } else {
+            jobs = jobService.findAll();
+        }
         List<JobDto> jobDtos = jobs.stream().map(jobMapper::mapTo).toList();
         return new ResponseEntity<>(jobDtos, HttpStatus.OK);
     }
