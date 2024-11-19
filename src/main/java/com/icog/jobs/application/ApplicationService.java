@@ -1,5 +1,7 @@
 package com.icog.jobs.application;
 
+import com.icog.jobs.application.dtos.ApplicationResponseDto;
+import com.icog.jobs.application.dtos.CreateApplicationDto;
 import com.icog.jobs.application.enums.ApplicationStatus;
 import com.icog.jobs.application.models.Application;
 import com.icog.jobs.job.JobRepository;
@@ -15,15 +17,23 @@ import java.util.Optional;
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final JobRepository jobRepository;
+    private final ApplicationMapper applicationMapper;
 
     @Autowired
-    public ApplicationService(ApplicationRepository applicationRepository, JobRepository jobRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository, JobRepository jobRepository, ApplicationMapper applicationMapper) {
         this.applicationRepository = applicationRepository;
         this.jobRepository = jobRepository;
+        this.applicationMapper = applicationMapper;
     }
 
-    public Application save(Application application) {
-        return applicationRepository.save(application);
+    public ApplicationResponseDto save(CreateApplicationDto createApplicationDto, Integer jobId) {
+        Job job = jobRepository.findById(jobId).get();
+
+        Application application = applicationMapper.mapFromCreate(createApplicationDto);
+        application.setJob(job);
+
+        Application savedApplication = applicationRepository.save(application);
+        return applicationMapper.mapToResponse(savedApplication);
     }
 
 
