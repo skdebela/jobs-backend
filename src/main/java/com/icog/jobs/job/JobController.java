@@ -8,6 +8,7 @@ import com.icog.jobs.job.models.Job;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,7 +51,8 @@ public class JobController {
             return new ResponseEntity<>(jobResponseDto, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    // TODO: POST /api/jobs
+
+
     @Operation(summary = "Create a job.",
     description = "Add a new job to the database.")
     @ApiResponses(value = {
@@ -58,7 +60,7 @@ public class JobController {
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/jobs")
-    ResponseEntity<JobResponseDto> createJob(@RequestBody CreateJobDto createJobDto) {
+    ResponseEntity<JobResponseDto> createJob(@Valid @RequestBody CreateJobDto createJobDto) {
         JobResponseDto savedJobResponseDto = jobService.save(createJobDto);
         return new ResponseEntity<>(savedJobResponseDto, HttpStatus.CREATED);
     }

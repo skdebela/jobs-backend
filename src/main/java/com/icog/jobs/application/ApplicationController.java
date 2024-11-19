@@ -9,6 +9,7 @@ import com.icog.jobs.job.models.Job;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.http.HttpStatus;
@@ -47,7 +48,7 @@ public class ApplicationController {
     @PostMapping(path = "/api/jobs/{id}/apply")
     ResponseEntity<ApplicationResponseDto> createApplication(
             @PathVariable("id") Integer jobId,
-            @RequestBody CreateApplicationDto createApplicationDto
+            @Valid @RequestBody CreateApplicationDto createApplicationDto
             ) {
 
         Optional<Job> foundJob = jobService.findOne(jobId);

@@ -7,6 +7,7 @@ import com.icog.jobs.company.models.Industry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class CompanyController {
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/companies")
-    ResponseEntity<CompanyDto> createCompany(@RequestBody CompanyDto companyDto) {
+    ResponseEntity<CompanyDto> createCompany(@Valid @RequestBody CompanyDto companyDto) {
         Company company = companyMapper.mapFrom(companyDto);
         Company savedCompany = companyService.save(company);
         CompanyDto savedCompanyDto = companyMapper.mapTo(savedCompany);
@@ -97,7 +98,7 @@ public class CompanyController {
     @PutMapping(path = "/api/companies/{id}")
     public ResponseEntity<CompanyDto> fullUpdateCompany(
             @PathVariable("id") Integer id,
-            @RequestBody CompanyDto companyDto
+            @Valid @RequestBody CompanyDto companyDto
     ) {
         if (!companyService.isExisting(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -120,7 +121,7 @@ public class CompanyController {
     @PatchMapping(path = "/api/companies/{id}")
     public ResponseEntity<CompanyDto> partiallyUpdateCompany(
             @PathVariable("id") Integer id,
-            @RequestBody CompanyDto companyDto
+            @Valid @RequestBody CompanyDto companyDto
     ) {
         if (!companyService.isExisting(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
