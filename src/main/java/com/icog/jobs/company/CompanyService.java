@@ -18,7 +18,7 @@ public class CompanyService {
         this.companyRepository = companyRepository;
     }
 
-    Company save(Company company) {
+    public Company save(Company company) {
         return companyRepository.save(company);
     }
 

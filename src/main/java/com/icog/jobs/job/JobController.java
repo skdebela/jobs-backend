@@ -1,7 +1,9 @@
 package com.icog.jobs.job;
 
 import com.icog.jobs.Mapper;
-import com.icog.jobs.job.dtos.JobDto;
+import com.icog.jobs.job.dtos.CreateJobDto;
+import com.icog.jobs.job.dtos.JobResponseDto;
+import com.icog.jobs.job.dtos.UpdateJobDto;
 import com.icog.jobs.job.models.Job;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,9 +18,9 @@ import java.util.Optional;
 @RestController
 public class JobController {
     private final JobService jobService;
-    private final Mapper<Job, JobDto> jobMapper;
+    private final JobMapper jobMapper;
 
-    public JobController(JobService jobService, Mapper<Job, JobDto> jobMapper) {
+    public JobController(JobService jobService, JobMapper jobMapper) {
         this.jobService = jobService;
         this.jobMapper = jobMapper;
     }
@@ -27,10 +29,10 @@ public class JobController {
             description = "Fetch all companies, an empty list if no company found.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved jobs.")
     @GetMapping(path = "/api/jobs")
-    ResponseEntity<List<JobDto>> getJobs() {
+    ResponseEntity<List<JobResponseDto>> getJobs() {
         List<Job> jobs = jobService.findAll();
-        List<JobDto> jobDtos = jobs.stream().map(jobMapper::mapTo).toList();
-        return new ResponseEntity<>(jobDtos, HttpStatus.OK);
+        List<JobResponseDto> jobResponseDtos = jobs.stream().map(jobMapper::mapToResponse).toList();
+        return new ResponseEntity<>(jobResponseDtos, HttpStatus.OK);
     }
 
 
@@ -41,11 +43,11 @@ public class JobController {
             @ApiResponse(responseCode = "404", description = "No Job found with that id.")
     })
     @GetMapping(path = "/api/jobs/{id}")
-    ResponseEntity<JobDto> getJob(@PathVariable Integer id) {
+    ResponseEntity<JobResponseDto> getJob(@PathVariable Integer id) {
         Optional<Job> foundJob = jobService.findOne(id);
         return foundJob.map(job -> {
-            JobDto jobDto = jobMapper.mapTo(job);
-            return new ResponseEntity<>(jobDto, HttpStatus.OK);
+            JobResponseDto jobResponseDto = jobMapper.mapToResponse(job);
+            return new ResponseEntity<>(jobResponseDto, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
     // TODO: POST /api/jobs
@@ -56,11 +58,9 @@ public class JobController {
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/jobs")
-    ResponseEntity<JobDto> createJob(@RequestBody JobDto jobDto) {
-        Job job = jobMapper.mapFrom(jobDto);
-        Job savedJob = jobService.save(job);
-        JobDto savedJobDto = jobMapper.mapTo(savedJob);
-        return new ResponseEntity<>(savedJobDto, HttpStatus.CREATED);
+    ResponseEntity<JobResponseDto> createJob(@RequestBody CreateJobDto createJobDto) {
+        JobResponseDto savedJobResponseDto = jobService.save(createJobDto);
+        return new ResponseEntity<>(savedJobResponseDto, HttpStatus.CREATED);
     }
 
 
@@ -73,20 +73,19 @@ public class JobController {
             @ApiResponse(responseCode = "404", description = "Job not found.")
     })
     @PutMapping(path = "api/jobs/{id}")
-    ResponseEntity<JobDto> updateJob(
+    ResponseEntity<JobResponseDto> updateJob(
             @PathVariable("id") Integer id,
-            @RequestBody JobDto jobDto
-    ) {
+            @RequestBody UpdateJobDto updateJobDto
+            ) {
         if (!jobService.isExisting(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        jobDto.setId(id);
-        Job job = jobMapper.mapFrom(jobDto);
-        Job savedJob = jobService.save(job);
-        JobDto updatedJobDto = jobMapper.mapTo(savedJob);
-        return new ResponseEntity<>(updatedJobDto, HttpStatus.OK);
+        updateJobDto.setId(id);
+        JobResponseDto savedJob = jobService.update(updateJobDto, id);
+        return new ResponseEntity<>(savedJob, HttpStatus.OK);
     }
+
+    // TODO: Patch api/jobs/{id}/status
 
 
     @Operation(
@@ -95,7 +94,7 @@ public class JobController {
     )
     @ApiResponse(responseCode = "204", description = "Company deleted.")
     @DeleteMapping(path = "api/jobs/{id}")
-    ResponseEntity<JobDto> deleteJob(@PathVariable Integer id) {
+    ResponseEntity<JobResponseDto> deleteJob(@PathVariable Integer id) {
         jobService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

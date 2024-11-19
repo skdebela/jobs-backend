@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class JobDto {
+public class JobResponseDto {
     private Integer id;
     private String title;
     private Company company;
