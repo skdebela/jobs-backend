@@ -32,15 +32,15 @@ public class JobController {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved jobs.")
     @GetMapping(path = "/api/jobs")
     ResponseEntity<List<JobDto>> getJobs(
-            @RequestParam(required = false) Industry industry,
-            @RequestParam(required = false) ExperienceLevel experienceLevel,
-            @RequestParam(required = false) JobType type,
-            @RequestParam(required = false) WorkMode workMode,
+            @RequestParam(required = false) List<Industry> industries,
+            @RequestParam(required = false) List<ExperienceLevel> experienceLevels,
+            @RequestParam(required = false) List<JobType> types,
+            @RequestParam(required = false) List<WorkMode> workModes,
             @RequestParam(required = false) String query
             ) {
         List<Job> jobs;
-        if (industry != null || experienceLevel != null || type != null || workMode != null || query != null) {
-            jobs = jobService.searchAndFilter(industry, experienceLevel, type, workMode, query);
+        if (industries != null || experienceLevels != null || types != null || workModes != null || query != null) {
+            jobs = jobService.searchAndFilter(industries, experienceLevels, types, workModes, query);
         } else {
             jobs = jobService.findAll();
         }

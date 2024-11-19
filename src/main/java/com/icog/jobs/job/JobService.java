@@ -42,22 +42,22 @@ public class JobService {
         jobRepository.deleteById(id);
     }
 
-    public List<Job> searchAndFilter(Industry industry, ExperienceLevel experienceLevel, JobType type, WorkMode workMode, String query) {
+    public List<Job> searchAndFilter(List<Industry> industries, List<ExperienceLevel> experienceLevels, List<JobType> types, List<WorkMode> workModes, String query) {
         return jobRepository.findAll((root, cq, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             var companyJoin = root.join("company");
 
-            if (industry != null) {
-                predicates.add(cb.equal(companyJoin.get("industry"), industry));
+            if (industries != null && !industries.isEmpty()) {
+                predicates.add(companyJoin.get("industry").in(industries));
             }
-            if (experienceLevel != null) {
-                predicates.add(cb.equal(root.get("experienceLevel"), experienceLevel));
+            if (experienceLevels != null && !experienceLevels.isEmpty()) {
+                predicates.add(root.get("experienceLevel").in(experienceLevels));
             }
-            if (type != null) {
-                predicates.add(cb.equal(root.get("type"), type));
+            if (types != null && !types.isEmpty()) {
+                predicates.add(root.get("type").in(types));
             }
-            if (workMode != null) {
-                predicates.add(cb.equal(root.get("workMode"), workMode));
+            if (workModes != null && !workModes.isEmpty()) {
+                predicates.add(root.get("workMode").in(workModes));
             }
 
             if (query != null) {
