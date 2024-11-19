@@ -42,15 +42,11 @@ public class JobService {
                 orElseThrow(() -> new IllegalArgumentException("Invalid Company Id: " + updateJobDto.getCompanyId()));
 
         Job existingJob = jobRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Job Id: " + id));
-        existingJob.setTitle(updateJobDto.getTitle());
-        existingJob.setCompany(company);
-        existingJob.setType(updateJobDto.getType());
-        existingJob.setExperienceLevel(updateJobDto.getExperienceLevel());
-        existingJob.setWorkMode(updateJobDto.getWorkMode());
-        existingJob.setStatus(updateJobDto.getStatus());
-        existingJob.setDescription(updateJobDto.getDescription());
+        Job jobUpdate = jobMapper.mapFromUpdate(updateJobDto);
+        jobUpdate.setCompany(company);
+        jobUpdate.setId(id);
 
-        Job savedJob = jobRepository.save(existingJob);
+        Job savedJob = jobRepository.save(jobUpdate);
         return jobMapper.mapToResponse(savedJob);
     }
 
