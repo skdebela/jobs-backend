@@ -85,4 +85,26 @@ public class CompanyRepositoryTests {
         Iterable<Company> result = underTest.findByIndustry(Industry.RETAIL);
         assertThat(result).containsExactly(company4);
     }
+
+
+    @Test
+    public void testThatExistsByNameAndIndustryGenerateCorrectSql() {
+        Company company1 = TestDataUtil.createTestCompany();
+        underTest.save(company1);
+        Company company2 = TestDataUtil.createTestCompany2();
+        underTest.save(company2);
+        Company company3 = TestDataUtil.createTestCompany3();
+        underTest.save(company3);
+        Company company4 = TestDataUtil.createTestCompany4();
+        underTest.save(company4);
+
+        boolean trueResult = underTest.existsByNameAndIndustry(company1.getName(), company1.getIndustry());
+        boolean falseResult = underTest.existsByNameAndIndustry("Open AI", Industry.TECHNOLOGY);
+        boolean falseResult2 = underTest.existsByNameAndIndustry("Apple", Industry.AGRICULTURE);
+        boolean falseResult3 = underTest.existsByNameAndIndustry("apple", Industry.TECHNOLOGY);
+        assertThat(trueResult).isTrue();
+        assertThat(falseResult).isFalse();
+        assertThat(falseResult2).isFalse();
+        assertThat(falseResult3).isFalse();
+    }
 }

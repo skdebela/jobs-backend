@@ -35,8 +35,9 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatCreateCompanySuccessfullyReturnHttp201Created() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        String testCompanyJson = objectMapper.writeValueAsString(testCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        String testCompanyJson = objectMapper.writeValueAsString(testCompanyDto);
+
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/companies")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,8 +50,9 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatCreateCompanySuccessfullyReturnCreatedCompany() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        String testCompanyJson = objectMapper.writeValueAsString(testCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        String testCompanyJson = objectMapper.writeValueAsString(testCompanyDto);
+
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/api/companies")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,13 +60,13 @@ public class CompanyControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.id").isNumber()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.name").value(testCompany.getName())
+                MockMvcResultMatchers.jsonPath("$.name").value(testCompanyDto.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.industry").value(testCompany.getIndustry().toString())
+                MockMvcResultMatchers.jsonPath("$.industry").value(testCompanyDto.getIndustry().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.website").value(testCompany.getWebsite())
+                MockMvcResultMatchers.jsonPath("$.website").value(testCompanyDto.getWebsite())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.headquarters").value(testCompany.getHeadquarters())
+                MockMvcResultMatchers.jsonPath("$.headquarters").value(testCompanyDto.getHeadquarters())
         );
     }
 
@@ -79,10 +81,10 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatGetCompanySuccessfullyReturnHttp200OkIfCompanyExist() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        companyService.save(testCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        companyService.save(testCompanyDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/companies/" + testCompany.getId())
+                MockMvcRequestBuilders.get("/api/companies/" + testCompanyDto.getId())
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
@@ -90,45 +92,44 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatGetCompanySuccessfullyReturnCompanyIfCompanyExist() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        Company savedTestCompany = companyService.save(testCompany);
-        String testCompanyJson = objectMapper.writeValueAsString(savedTestCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto savedTestCompany = companyService.save(testCompanyDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/companies/" + testCompany.getId())
+                MockMvcRequestBuilders.get("/api/companies/" + savedTestCompany.getId())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.id").isNumber()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.name").value(testCompany.getName())
+                MockMvcResultMatchers.jsonPath("$.name").value(testCompanyDto.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.industry").value(testCompany.getIndustry().toString())
+                MockMvcResultMatchers.jsonPath("$.industry").value(testCompanyDto.getIndustry().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.website").value(testCompany.getWebsite())
+                MockMvcResultMatchers.jsonPath("$.website").value(testCompanyDto.getWebsite())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.headquarters").value(testCompany.getHeadquarters())
+                MockMvcResultMatchers.jsonPath("$.headquarters").value(testCompanyDto.getHeadquarters())
         );
     }
 
     @Test
     public void testThatGetCompanyByIndustrySuccessfullyReturnCompanyWhenCompanyExist() throws Exception {
-        Company testCompany1 = TestDataUtil.createTestCompany();
-        companyService.save(testCompany1);
-        Company testCompany4 = TestDataUtil.createTestCompany4();
-        companyService.save(testCompany4);
+        CompanyDto testCompany1Dto = TestDataUtil.createTestCompanyDto();
+        companyService.save(testCompany1Dto);
+        CompanyDto testCompany4Dto = TestDataUtil.createTestCompany4Dto();
+        companyService.save(testCompany4Dto);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/companies/industry/" + testCompany1.getIndustry())
+                MockMvcRequestBuilders.get("/api/companies/industry/" + testCompany1Dto.getIndustry())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$", org.hamcrest.Matchers.hasSize(1))
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.[0].id").isNumber()
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.[0].name").value(testCompany1.getName())
+                MockMvcResultMatchers.jsonPath("$.[0].name").value(testCompany1Dto.getName())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.[0].industry").value(testCompany1.getIndustry().toString())
+                MockMvcResultMatchers.jsonPath("$.[0].industry").value(testCompany1Dto.getIndustry().toString())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.[0].website").value(testCompany1.getWebsite())
+                MockMvcResultMatchers.jsonPath("$.[0].website").value(testCompany1Dto.getWebsite())
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.[0].headquarters").value(testCompany1.getHeadquarters())
+                MockMvcResultMatchers.jsonPath("$.[0].headquarters").value(testCompany1Dto.getHeadquarters())
         );
     }
 
@@ -149,8 +150,8 @@ public class CompanyControllerTests {
     }
     @Test
     public void testThatFullUpdateCompanySuccessfullyReturnHttp200WhenAuthorExist() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        Company savedTestCompany = companyService.save(testCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto savedTestCompany = companyService.save(testCompanyDto);
 
         CompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
         String testCompany2DtoJson = objectMapper.writeValueAsString(testCompany2Dto);
@@ -166,8 +167,8 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatFullUpdateCompanySuccessfullyReturnUpdatedCompany() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        Company savedTestCompany = companyService.save(testCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto savedTestCompany = companyService.save(testCompanyDto);
 
         CompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
         String testCompany2DtoJson = objectMapper.writeValueAsString(testCompany2Dto);
@@ -189,66 +190,6 @@ public class CompanyControllerTests {
         );
     }
 
-    //TODO: test partial update controller
-    @Test
-    public void testThatPartialUpdateCompanySuccessfullyReturnHttp404WhenAuthorDoesNotExist() throws Exception {
-        CompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
-        String testCompany2DtoJson = objectMapper.writeValueAsString(testCompany2Dto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.patch("/api/companies/" + 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(testCompany2DtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isNotFound()
-        );
-    }
-    @Test
-    public void testThatPartialUpdateCompanySuccessfullyReturnHttp200WhenAuthorExist() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        Company savedTestCompany = companyService.save(testCompany);
-
-        CompanyDto testCompanyDto = CompanyDto.builder()
-                .headquarters("Debre Birhan, Ethiopia")
-                .build();
-        String testCompanyDtoJson = objectMapper.writeValueAsString(testCompanyDto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.patch("/api/companies/" + savedTestCompany.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(testCompanyDtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.status().isOk()
-        );
-    }
-
-    @Test
-    public void testThatPartialUpdateCompanySuccessfullyReturnUpdatedCompany() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        Company savedTestCompany = companyService.save(testCompany);
-
-        CompanyDto testCompanyDto = CompanyDto.builder()
-                .headquarters("Debre Birhan, Ethiopia")
-                .build();
-        String testCompanyDtoJson = objectMapper.writeValueAsString(testCompanyDto);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.patch("/api/companies/" + savedTestCompany.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(testCompanyDtoJson)
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").value(savedTestCompany.getId())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.name").value(testCompany.getName())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.industry").value(testCompany.getIndustry().toString())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.website").value(testCompany.getWebsite())
-        ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.headquarters").value(testCompanyDto.getHeadquarters())
-        );
-    }
-    //TODO: test delete controller
     @Test
     public void testThatDeleteCompanyReturnsHttpStatus204ForNonExistingCompanies() throws Exception {
         mockMvc.perform(
@@ -260,8 +201,8 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatDeleteCompanyReturnsHttpStatus204ForExistingCompanies() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
-        Company savedTestCompany = companyService.save(testCompany);
+        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto savedTestCompany = companyService.save(testCompanyDto);
 
         mockMvc.perform(
                 MockMvcRequestBuilders.delete("/api/companies/" + savedTestCompany.getId())

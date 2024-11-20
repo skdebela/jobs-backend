@@ -24,6 +24,7 @@ public class Company {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Industry industry;
 
+    @Column(unique = true)
     private String website;
 
     private String headquarters;

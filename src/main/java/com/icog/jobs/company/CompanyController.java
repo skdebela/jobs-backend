@@ -32,13 +32,12 @@ public class CompanyController {
             , description = "Add a new company to the database.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Company created successfully."),
+            @ApiResponse(responseCode = "409", description = "Duplicate company detected."),
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/companies")
     ResponseEntity<CompanyDto> createCompany(@Valid @RequestBody CompanyDto companyDto) {
-        Company company = companyMapper.mapFrom(companyDto);
-        Company savedCompany = companyService.save(company);
-        CompanyDto savedCompanyDto = companyMapper.mapTo(savedCompany);
+        CompanyDto savedCompanyDto = companyService.createCompany(companyDto);
         return new ResponseEntity<>(savedCompanyDto, HttpStatus.CREATED);
     }
 
@@ -100,37 +99,7 @@ public class CompanyController {
             @PathVariable("id") Integer id,
             @Valid @RequestBody CompanyDto companyDto
     ) {
-        if (!companyService.isExisting(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        companyDto.setId(id);
-        Company company = companyMapper.mapFrom(companyDto);
-        Company savedCompany = companyService.save(company);
-        CompanyDto savedCompanyDto = companyMapper.mapTo(savedCompany);
-        return new ResponseEntity<>(savedCompanyDto, HttpStatus.OK);
-    }
-
-
-    @Operation(summary = "Partially update a company."
-            , description = "")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Company successfully updated."),
-            @ApiResponse(responseCode = "404", description = "Company not found.")
-    })
-    @PatchMapping(path = "/api/companies/{id}")
-    public ResponseEntity<CompanyDto> partiallyUpdateCompany(
-            @PathVariable("id") Integer id,
-            @Valid @RequestBody CompanyDto companyDto
-    ) {
-        if (!companyService.isExisting(id)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        companyDto.setId(id);
-        Company company = companyMapper.mapFrom(companyDto);
-        Company savedCompany = companyService.partialUpdate(id, company);
-        CompanyDto savedCompanyDto = companyMapper.mapTo(savedCompany);
+        CompanyDto savedCompanyDto = companyService.update(id, companyDto);
         return new ResponseEntity<>(savedCompanyDto, HttpStatus.OK);
     }
 

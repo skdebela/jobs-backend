@@ -80,6 +80,16 @@ public class TestDataUtil {
                 .build();
     }
 
+    public static CompanyDto createTestCompany4Dto() {
+        return CompanyDto.builder()
+                .id(4)
+                .name("Queen's Supermarket")
+                .industry(Industry.RETAIL)
+                .website("https://www.queens.com")
+                .headquarters("Addis Ababa, Ethiopia")
+                .build();
+    }
+
     public static Job createTestJob(final Company company) {
         return Job.builder()
                 .id(1)
@@ -94,7 +104,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static CreateJobDto createTestJobDto(final Company company) {
+    public static CreateJobDto createTestJobDto(final CompanyDto company) {
         return CreateJobDto.builder()
                 .id(1)
                 .title("Software Engineer")
@@ -120,7 +130,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static CreateJobDto createTestJobDto2(final Company company) {
+    public static CreateJobDto createTestJobDto2(final CompanyDto company) {
         return CreateJobDto.builder()
                 .id(2)
                 .title("Accountant")
@@ -132,7 +142,7 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static UpdateJobDto createTestUpdateJobDto2(final Company company) {
+    public static UpdateJobDto createTestUpdateJobDto2(final CompanyDto company) {
         return UpdateJobDto.builder()
                 .id(2)
                 .title("Accountant")
