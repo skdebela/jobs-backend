@@ -3,6 +3,7 @@ package com.icog.jobs.job;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icog.jobs.TestDataUtil;
 import com.icog.jobs.company.CompanyService;
+import com.icog.jobs.company.dtos.CompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.job.dtos.CreateJobDto;
 import com.icog.jobs.job.dtos.JobResponseDto;
@@ -39,7 +40,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatCreateJobsReturnsHttp201Created() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
+        CompanyDto testCompany = TestDataUtil.createTestCompanyDto();
         testCompany = companyService.save(testCompany);
 
         CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompany);
@@ -56,7 +57,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatCreateJobReturnsJob() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
+        CompanyDto testCompany = TestDataUtil.createTestCompanyDto();
         testCompany = companyService.save(testCompany);
 
         CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompany);
@@ -94,7 +95,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatGetJobsReturnsListOfJobs() throws Exception {
-        Company company = TestDataUtil.createTestCompany();
+        CompanyDto company = TestDataUtil.createTestCompanyDto();
         company = companyService.save(company);
 
         CreateJobDto job = TestDataUtil.createTestJobDto(company);
@@ -120,7 +121,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatGetJobReturn200OkWhenJobExists() throws Exception {
-        Company company = TestDataUtil.createTestCompany();
+        CompanyDto company = TestDataUtil.createTestCompanyDto();
         company = companyService.save(company);
 
         CreateJobDto job = TestDataUtil.createTestJobDto(company);
@@ -144,7 +145,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatGetJobReturnsJobWhenJobExists() throws Exception {
-        Company company = TestDataUtil.createTestCompany();
+        CompanyDto company = TestDataUtil.createTestCompanyDto();
         company = companyService.save(company);
 
         CreateJobDto job = TestDataUtil.createTestJobDto(company);
@@ -171,13 +172,13 @@ public class JobControllerTests {
     // update
     @Test
     public void testThatUpdateJobsReturnsHttp201Created() throws Exception {
-        Company testCompany1 = TestDataUtil.createTestCompany();
+        CompanyDto testCompany1 = TestDataUtil.createTestCompanyDto();
         testCompany1 = companyService.save(testCompany1);
 
         CreateJobDto testJob1 = TestDataUtil.createTestJobDto(testCompany1);
         jobService.save(testJob1);
 
-        Company testCompany2 = TestDataUtil.createTestCompany2();
+        CompanyDto testCompany2 = TestDataUtil.createTestCompany2Dto();
         testCompany2 = companyService.save(testCompany2);
 
         CreateJobDto testJob2 = TestDataUtil.createTestJobDto2(testCompany2);
@@ -194,7 +195,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatUpdateJobReturn404NotFoundWhenJobDoesNotExist() throws Exception {
-        Company testCompany2 = TestDataUtil.createTestCompany2();
+        CompanyDto testCompany2 = TestDataUtil.createTestCompany2Dto();
         testCompany2 = companyService.save(testCompany2);
 
         CreateJobDto testJob2 = TestDataUtil.createTestJobDto(testCompany2);
@@ -210,7 +211,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatUpdateJobReturnsJob() throws Exception {
-        Company testCompany1 = TestDataUtil.createTestCompany();
+        CompanyDto testCompany1 = TestDataUtil.createTestCompanyDto();
         testCompany1 = companyService.save(testCompany1);
         CreateJobDto testJob1 = TestDataUtil.createTestJobDto(testCompany1);
         JobResponseDto savedTestJob1 = jobService.save(testJob1);
@@ -253,7 +254,7 @@ public class JobControllerTests {
 
     @Test
     public void testThatDeleteJobReturnsHttpStatus204NoContentForExistingJob() throws Exception {
-        Company testCompany = TestDataUtil.createTestCompany();
+        CompanyDto testCompany = TestDataUtil.createTestCompanyDto();
         testCompany = companyService.save(testCompany);
 
         CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompany);

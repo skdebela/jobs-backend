@@ -57,11 +57,12 @@ public class JobController {
     description = "Add a new job to the database.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Job created successfully."),
+            @ApiResponse(responseCode = "409", description = "Duplicate job detected."),
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/jobs")
     ResponseEntity<JobResponseDto> createJob(@Valid @RequestBody CreateJobDto createJobDto) {
-        JobResponseDto savedJobResponseDto = jobService.save(createJobDto);
+        JobResponseDto savedJobResponseDto = jobService.createJob(createJobDto);
         return new ResponseEntity<>(savedJobResponseDto, HttpStatus.CREATED);
     }
 
