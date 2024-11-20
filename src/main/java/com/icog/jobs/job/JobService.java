@@ -1,5 +1,9 @@
 package com.icog.jobs.job;
 
+import com.icog.jobs.company.models.Industry;
+import com.icog.jobs.job.enums.ExperienceLevel;
+import com.icog.jobs.job.enums.JobType;
+import com.icog.jobs.job.enums.WorkMode;
 import com.icog.jobs.company.CompanyRepository;
 import com.icog.jobs.company.CompanyService;
 import com.icog.jobs.company.models.Company;
@@ -8,10 +12,12 @@ import com.icog.jobs.job.dtos.JobResponseDto;
 import com.icog.jobs.job.dtos.UpdateJobDto;
 import com.icog.jobs.job.models.Job;
 import org.springframework.http.HttpStatus;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,5 +95,40 @@ public class JobService {
 
     public void delete(Integer id) {
         jobRepository.deleteById(id);
+    }
+
+    public List<Job> searchAndFilter(List<Industry> industries, List<ExperienceLevel> experienceLevels, List<JobType> types, List<WorkMode> workModes, String query) {
+        return jobRepository.findAll((root, cq, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            var companyJoin = root.join("company");
+
+            if (industries != null && !industries.isEmpty()) {
+                predicates.add(companyJoin.get("industry").in(industries));
+            }
+            if (experienceLevels != null && !experienceLevels.isEmpty()) {
+                predicates.add(root.get("experienceLevel").in(experienceLevels));
+            }
+            if (types != null && !types.isEmpty()) {
+                predicates.add(root.get("type").in(types));
+            }
+            if (workModes != null && !workModes.isEmpty()) {
+                predicates.add(root.get("workMode").in(workModes));
+            }
+
+            if (query != null) {
+                String likeQuery = "%" + query.toLowerCase() + "%";
+                Predicate titleMatch = cb.like(cb.lower(root.get("title")), likeQuery);
+                Predicate companyNameMatch = cb.like(cb.lower(companyJoin.get("name")), likeQuery);
+                Predicate addressMatch = cb.like(cb.lower(companyJoin.get("headquarters")), likeQuery);
+                Predicate descriptionMatch = cb.like(cb.lower(root.get("description")), likeQuery);
+                Predicate experienceLevelMatch = cb.like(cb.lower(root.get("experienceLevel")), likeQuery);
+                Predicate typeMatch = cb.like(cb.lower(root.get("type")), likeQuery);
+                Predicate workModeMatch = cb.like(cb.lower(root.get("workMode")), likeQuery);
+
+                predicates.add(cb.or(titleMatch, companyNameMatch, addressMatch, descriptionMatch, experienceLevelMatch, typeMatch, workModeMatch));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        });
     }
 }
