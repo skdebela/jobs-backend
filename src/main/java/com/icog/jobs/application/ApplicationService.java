@@ -7,7 +7,9 @@ import com.icog.jobs.application.models.Application;
 import com.icog.jobs.job.JobRepository;
 import com.icog.jobs.job.models.Job;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import org.webjars.NotFoundException;
 
 import java.util.List;
@@ -26,14 +28,28 @@ public class ApplicationService {
         this.applicationMapper = applicationMapper;
     }
 
+    public boolean isExisting(Integer jobId, CreateApplicationDto createApplicationDto) {
+        return applicationRepository.existsByJobIdAndApplicantEmail(jobId, createApplicationDto.getApplicantEmail());
+    }
+
     public ApplicationResponseDto save(CreateApplicationDto createApplicationDto, Integer jobId) {
         Job job = jobRepository.findById(jobId).get();
-
         Application application = applicationMapper.mapFromCreate(createApplicationDto);
         application.setJob(job);
 
         Application savedApplication = applicationRepository.save(application);
         return applicationMapper.mapToResponse(savedApplication);
+    }
+
+    public ApplicationResponseDto createApplication(CreateApplicationDto createApplicationDto, Integer jobId) {
+        Job job = jobRepository.findById(jobId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Job not found."));
+
+        if(isExisting(jobId, createApplicationDto)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Application already exists.");
+        }
+
+        return save(createApplicationDto, jobId);
     }
 
 

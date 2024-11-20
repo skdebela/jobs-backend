@@ -43,6 +43,7 @@ public class ApplicationController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Application successfully created."),
+            @ApiResponse(responseCode = "409", description = "Application already exists."),
             @ApiResponse(responseCode = "404", description = "Application creation failed.")
     })
     @PostMapping(path = "/api/jobs/{id}/apply")
@@ -50,12 +51,8 @@ public class ApplicationController {
             @PathVariable("id") Integer jobId,
             @Valid @RequestBody CreateApplicationDto createApplicationDto
             ) {
-
-        Optional<Job> foundJob = jobService.findOne(jobId);
-        return foundJob.map(job -> {
-            ApplicationResponseDto savedApplicationResponseDto = applicationService.save(createApplicationDto, jobId);
-            return new ResponseEntity<>(savedApplicationResponseDto, HttpStatus.CREATED);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        ApplicationResponseDto savedApplicationResponseDto = applicationService.createApplication(createApplicationDto, jobId);
+        return new ResponseEntity<>(savedApplicationResponseDto, HttpStatus.CREATED);
     }
 
     @Operation(
