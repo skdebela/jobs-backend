@@ -1,9 +1,15 @@
 package com.icog.jobs.job;
 
 import com.icog.jobs.Mapper;
+import com.icog.jobs.company.models.Industry;
 import com.icog.jobs.job.dtos.JobDto;
+import com.icog.jobs.job.enums.ExperienceLevel;
+import com.icog.jobs.job.enums.JobType;
+import com.icog.jobs.job.enums.WorkMode;
 import com.icog.jobs.job.models.Job;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
@@ -23,12 +29,66 @@ public class JobController {
         this.jobMapper = jobMapper;
     }
 
-    @Operation(summary = "Get all jobs.",
-            description = "Fetch all companies, an empty list if no company found.")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved jobs.")
+    @Operation(
+            summary = "Get all jobs.",
+            description = """
+        Fetch all jobs with optional filtering and search capabilities. 
+        Use query parameters to filter by experience level, job type, work mode, and search by keyword.
+        """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved jobs."),
+            @ApiResponse(responseCode = "400", description = "Invalid query parameters.")
+    })
     @GetMapping(path = "/api/jobs")
-    ResponseEntity<List<JobDto>> getJobs() {
-        List<Job> jobs = jobService.findAll();
+    ResponseEntity<List<JobDto>> getJobs(
+            @Parameter(
+                    description = "Filter by industries.",
+                    schema = @Schema(allowableValues = {
+                            "TECHNOLOGY", "FINANCE", "HEALTHCARE", "EDUCATION", "CONSTRUCTION", "RETAIL", "MANUFACTURING"
+                    })
+
+            )
+            @RequestParam(required = false) List<Industry> industries,
+
+
+            @Parameter(
+                    description = "Filter by Experience Level.",
+                    schema = @Schema(allowableValues = {
+                            "INTERNSHIP", "ASSOCIATE", "DIRECTOR", "ENTRY_LEVEL", "MID_SENIOR_LEVEL", "SENIOR_LEVEL", "EXECUTIVE_LEVEL"
+                    })
+
+            )
+            @RequestParam(required = false) List<ExperienceLevel> experienceLevels,
+
+            @Parameter(
+                    description = "Filter by Job Types.",
+                    schema = @Schema(allowableValues = {
+                            "FULL_TIME", "PART_TIME", "CONTRACTUAL"
+                    })
+
+            )
+            @RequestParam(required = false) List<JobType> types,
+
+            @Parameter(
+                    description = "Filter by Work Mode.",
+                    schema = @Schema(allowableValues = {
+                            "REMOTE", "ON_SITE", "HYBRID"
+                    })
+
+            )
+            @RequestParam(required = false) List<WorkMode> workModes,
+
+            @Parameter(
+                    description = "Search query for title, company, description, etc."
+            )
+            @RequestParam(required = false) String query
+            ) {
+        List<Job> jobs;
+        if (industries != null || experienceLevels != null || types != null || workModes != null || query != null) {
+            jobs = jobService.searchAndFilter(industries, experienceLevels, types, workModes, query);
+        } else {
+            jobs = jobService.findAll();
+        }
         List<JobDto> jobDtos = jobs.stream().map(jobMapper::mapTo).toList();
         return new ResponseEntity<>(jobDtos, HttpStatus.OK);
     }
