@@ -42,7 +42,7 @@ public class Application {
     private Gender applicantGender;
 
     @Enumerated(EnumType.STRING)
-    private EducationLevel applicantEducationLeve;
+    private EducationLevel applicantEducationLevel;
 
     @Enumerated(EnumType.STRING)
     private ExperienceLevel applicantExperienceLevel;

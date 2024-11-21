@@ -165,7 +165,7 @@ public class TestDataUtil {
                 .applicantAddress("Addis Ababa, Ethiopia")
                 .applicantExperienceLevel(ExperienceLevel.SENIOR_LEVEL)
                 .applicantBirthDate(LocalDate.now())
-                .applicantEducationLeve(EducationLevel.PHD)
+                .applicantEducationLevel(EducationLevel.PHD)
                 .job(job)
                 .status(ApplicationStatus.SUBMITTED)
                 .build();
