@@ -3,8 +3,9 @@ package com.icog.jobs.company;
 import com.icog.jobs.company.dtos.CompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.company.models.Industry;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,26 +13,30 @@ import java.util.Optional;
 @Service
 public class CompanyService {
 
+    private final CompanyMapper companyMapper;
     CompanyRepository companyRepository;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, CompanyMapper companyMapper) {
         this.companyRepository = companyRepository;
+        this.companyMapper = companyMapper;
     }
 
-    Company save(Company company) {
-        return companyRepository.save(company);
+    public CompanyDto save(CompanyDto companyDto) {
+        Company company = companyMapper.mapFrom(companyDto);
+        Company savedCompany = companyRepository.save(company);
+        return companyMapper.mapTo(savedCompany);
     }
 
-    List<Company> findAll() {
+    public List<Company> findAll() {
         return companyRepository.findAll();
     }
 
-    Optional<Company> findOne(Integer id) {
+    public Optional<Company> findOne(Integer id) {
         return companyRepository.findById(id);
     }
 
-    Boolean isExisting(Integer id) {
-        return companyRepository.existsById(id);
+    public Boolean isExisting(CompanyDto companyDto) {
+        return companyRepository.existsByNameAndIndustry(companyDto.getName(), companyDto.getIndustry());
     }
 
 
@@ -39,16 +44,21 @@ public class CompanyService {
         return companyRepository.findByIndustry(industry);
     }
 
-    public Company partialUpdate(Integer id, Company company) {
-        company.setId(id);
+    public CompanyDto update(Integer id, CompanyDto companyDto) {
+        Company existingCompany = findOne(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        return companyRepository.findById(id).map(existingCompany -> {
-            Optional.ofNullable(company.getName()).ifPresent(existingCompany::setName);
-            Optional.ofNullable(company.getIndustry()).ifPresent(existingCompany::setIndustry);
-            Optional.ofNullable(company.getWebsite()).ifPresent(existingCompany::setWebsite);
-            Optional.ofNullable(company.getHeadquarters()).ifPresent(existingCompany::setHeadquarters);
-            return companyRepository.save(existingCompany);
-        }).orElseThrow(() -> new RuntimeException("Could not find company with id: " + id));
+        companyDto.setId(id);
+        Company updatedCompany = companyMapper.mapFrom(companyDto);
+        Company savedCompany = companyRepository.save(updatedCompany);
+
+        return companyMapper.mapTo(savedCompany);
+    }
+
+    public CompanyDto createCompany(CompanyDto companyDto) {
+        if (isExisting(companyDto)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "A company with the same name and industry already exists.");
+        }
+        return save(companyDto);
     }
 
     public void delete(Integer id) {

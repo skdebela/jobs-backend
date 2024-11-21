@@ -1,8 +1,10 @@
 package com.icog.jobs.job;
 
 import com.icog.jobs.Mapper;
+import com.icog.jobs.job.dtos.CreateJobDto;
+import com.icog.jobs.job.dtos.JobResponseDto;
+import com.icog.jobs.job.dtos.UpdateJobDto;
 import com.icog.jobs.company.models.Industry;
-import com.icog.jobs.job.dtos.JobDto;
 import com.icog.jobs.job.enums.ExperienceLevel;
 import com.icog.jobs.job.enums.JobType;
 import com.icog.jobs.job.enums.WorkMode;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +25,9 @@ import java.util.Optional;
 @RestController
 public class JobController {
     private final JobService jobService;
-    private final Mapper<Job, JobDto> jobMapper;
+    private final JobMapper jobMapper;
 
-    public JobController(JobService jobService, Mapper<Job, JobDto> jobMapper) {
+    public JobController(JobService jobService, JobMapper jobMapper) {
         this.jobService = jobService;
         this.jobMapper = jobMapper;
     }
@@ -40,7 +43,7 @@ public class JobController {
             @ApiResponse(responseCode = "400", description = "Invalid query parameters.")
     })
     @GetMapping(path = "/api/jobs")
-    ResponseEntity<List<JobDto>> getJobs(
+    ResponseEntity<List<JobResponseDto>> getJobs(
             @Parameter(
                     description = "Filter by industries.",
                     schema = @Schema(allowableValues = {
@@ -89,7 +92,7 @@ public class JobController {
         } else {
             jobs = jobService.findAll();
         }
-        List<JobDto> jobDtos = jobs.stream().map(jobMapper::mapTo).toList();
+        List<JobResponseDto> jobDtos = jobs.stream().map(jobMapper::mapToResponse).toList();
         return new ResponseEntity<>(jobDtos, HttpStatus.OK);
     }
 
@@ -101,26 +104,26 @@ public class JobController {
             @ApiResponse(responseCode = "404", description = "No Job found with that id.")
     })
     @GetMapping(path = "/api/jobs/{id}")
-    ResponseEntity<JobDto> getJob(@PathVariable Integer id) {
+    ResponseEntity<JobResponseDto> getJob(@PathVariable Integer id) {
         Optional<Job> foundJob = jobService.findOne(id);
         return foundJob.map(job -> {
-            JobDto jobDto = jobMapper.mapTo(job);
-            return new ResponseEntity<>(jobDto, HttpStatus.OK);
+            JobResponseDto jobResponseDto = jobMapper.mapToResponse(job);
+            return new ResponseEntity<>(jobResponseDto, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    // TODO: POST /api/jobs
+
+
     @Operation(summary = "Create a job.",
     description = "Add a new job to the database.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Job created successfully."),
+            @ApiResponse(responseCode = "409", description = "Duplicate job detected."),
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/jobs")
-    ResponseEntity<JobDto> createJob(@RequestBody JobDto jobDto) {
-        Job job = jobMapper.mapFrom(jobDto);
-        Job savedJob = jobService.save(job);
-        JobDto savedJobDto = jobMapper.mapTo(savedJob);
-        return new ResponseEntity<>(savedJobDto, HttpStatus.CREATED);
+    ResponseEntity<JobResponseDto> createJob(@Valid @RequestBody CreateJobDto createJobDto) {
+        JobResponseDto savedJobResponseDto = jobService.createJob(createJobDto);
+        return new ResponseEntity<>(savedJobResponseDto, HttpStatus.CREATED);
     }
 
 
@@ -133,20 +136,19 @@ public class JobController {
             @ApiResponse(responseCode = "404", description = "Job not found.")
     })
     @PutMapping(path = "api/jobs/{id}")
-    ResponseEntity<JobDto> updateJob(
+    ResponseEntity<JobResponseDto> updateJob(
             @PathVariable("id") Integer id,
-            @RequestBody JobDto jobDto
-    ) {
+            @RequestBody UpdateJobDto updateJobDto
+            ) {
         if (!jobService.isExisting(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        jobDto.setId(id);
-        Job job = jobMapper.mapFrom(jobDto);
-        Job savedJob = jobService.save(job);
-        JobDto updatedJobDto = jobMapper.mapTo(savedJob);
-        return new ResponseEntity<>(updatedJobDto, HttpStatus.OK);
+        updateJobDto.setId(id);
+        JobResponseDto savedJob = jobService.update(updateJobDto, id);
+        return new ResponseEntity<>(savedJob, HttpStatus.OK);
     }
+
+    // TODO: Patch api/jobs/{id}/status
 
 
     @Operation(
@@ -155,7 +157,7 @@ public class JobController {
     )
     @ApiResponse(responseCode = "204", description = "Company deleted.")
     @DeleteMapping(path = "api/jobs/{id}")
-    ResponseEntity<JobDto> deleteJob(@PathVariable Integer id) {
+    ResponseEntity<JobResponseDto> deleteJob(@PathVariable Integer id) {
         jobService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

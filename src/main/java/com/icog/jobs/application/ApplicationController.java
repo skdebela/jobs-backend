@@ -1,6 +1,7 @@
 package com.icog.jobs.application;
 
-import com.icog.jobs.application.dtos.ApplicationDto;
+import com.icog.jobs.application.dtos.ApplicationResponseDto;
+import com.icog.jobs.application.dtos.CreateApplicationDto;
 import com.icog.jobs.application.enums.ApplicationStatus;
 import com.icog.jobs.application.models.Application;
 import com.icog.jobs.job.JobService;
@@ -8,7 +9,7 @@ import com.icog.jobs.job.models.Job;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.websocket.server.PathParam;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties;
 import org.springframework.http.HttpStatus;
@@ -42,21 +43,16 @@ public class ApplicationController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Application successfully created."),
+            @ApiResponse(responseCode = "409", description = "Application already exists."),
             @ApiResponse(responseCode = "404", description = "Application creation failed.")
     })
     @PostMapping(path = "/api/jobs/{id}/apply")
-    ResponseEntity<ApplicationDto> createApplication(
+    ResponseEntity<ApplicationResponseDto> createApplication(
             @PathVariable("id") Integer jobId,
-            @RequestBody ApplicationDto applicationDto
-    ) {
-        Optional<Job> foundJob = jobService.findOne(jobId);
-        return foundJob.map(job -> {
-            Application application = applicationMapper.mapFrom(applicationDto);
-            application.setJob(job);
-            Application savedApplication = applicationService.save(application);
-            ApplicationDto savedApplicationDto = applicationMapper.mapTo(savedApplication);
-            return new ResponseEntity<>(savedApplicationDto, HttpStatus.CREATED);
-        }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            @Valid @RequestBody CreateApplicationDto createApplicationDto
+            ) {
+        ApplicationResponseDto savedApplicationResponseDto = applicationService.createApplication(createApplicationDto, jobId);
+        return new ResponseEntity<>(savedApplicationResponseDto, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -68,13 +64,13 @@ public class ApplicationController {
             @ApiResponse(responseCode = "404", description = "Job not found.")
     })
     @GetMapping(path = "/api/jobs/{id}/applications")
-    ResponseEntity<List<ApplicationDto>> getApplications(
+    ResponseEntity<List<ApplicationResponseDto>> getApplications(
             @PathVariable("id") Integer jobId
     ) {
         Optional<Job> foundJob = jobService.findOne(jobId);
         return foundJob.map(job -> {
             List<Application> applications = applicationService.findByJob(job);
-            List<ApplicationDto> applicationDtos = applications.stream().map(applicationMapper::mapTo).collect(Collectors.toList());
+            List<ApplicationResponseDto> applicationDtos = applications.stream().map(applicationMapper::mapToResponse).collect(Collectors.toList());
             return new ResponseEntity<>(applicationDtos, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -88,12 +84,12 @@ public class ApplicationController {
             @ApiResponse(responseCode = "404", description = "Application not found.")
     })
     @GetMapping(path = "/api/jobs/{jobId}/applications/{applicationId}")
-    ResponseEntity<ApplicationDto> getApplication(
+    ResponseEntity<ApplicationResponseDto> getApplication(
             @PathVariable("applicationId") Integer applicationId
     ) {
         Optional<Application> foundApplication = applicationService.findOne(applicationId);
         return foundApplication.map(application -> {
-            ApplicationDto applicationDto = applicationMapper.mapTo(application);
+            ApplicationResponseDto applicationDto = applicationMapper.mapToResponse(application);
             return new ResponseEntity<>(applicationDto, HttpStatus.OK);
         }).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -107,7 +103,7 @@ public class ApplicationController {
             @ApiResponse(responseCode = "404", description = "Application not found.")
     })
     @PatchMapping(path = "/api/jobs/{jobId}/applications/{applicationId}/status")
-    public ResponseEntity<ApplicationDto> updateApplicationStatus(
+    public ResponseEntity<ApplicationResponseDto> updateApplicationStatus(
             @PathVariable("applicationId") Integer applicationId,
             @RequestBody Map<String, String> applicationStatus
     ) {
@@ -130,7 +126,7 @@ public class ApplicationController {
 
         Application application = foundApplication.get();
         application = applicationService.updateStatus(applicationId, status);
-        ApplicationDto savedApplicationDto = applicationMapper.mapTo(application);
+        ApplicationResponseDto savedApplicationDto = applicationMapper.mapToResponse(application);
         return new ResponseEntity<>(savedApplicationDto, HttpStatus.OK);
     }
 

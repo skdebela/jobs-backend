@@ -28,11 +28,14 @@ public class ApplicationRepositoryTests {
     ApplicationRepository underTest;
     @Autowired
     private JobRepository jobRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
 
 
     @Test
     public void testThatApplicationCanBeCreatedAndRecalled() {
         Company testCompany = TestDataUtil.createTestCompany();
+        companyRepository.save(testCompany);
         Job testJob = TestDataUtil.createTestJob(testCompany);
         jobRepository.save(testJob);
         Application testApplication = TestDataUtil.createTestApplication(testJob);

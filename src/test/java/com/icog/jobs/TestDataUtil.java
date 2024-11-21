@@ -7,6 +7,8 @@ import com.icog.jobs.application.models.Application;
 import com.icog.jobs.company.dtos.CompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.company.models.Industry;
+import com.icog.jobs.job.dtos.CreateJobDto;
+import com.icog.jobs.job.dtos.UpdateJobDto;
 import com.icog.jobs.job.enums.ExperienceLevel;
 import com.icog.jobs.job.enums.JobStatus;
 import com.icog.jobs.job.enums.JobType;
@@ -78,6 +80,16 @@ public class TestDataUtil {
                 .build();
     }
 
+    public static CompanyDto createTestCompany4Dto() {
+        return CompanyDto.builder()
+                .id(4)
+                .name("Queen's Supermarket")
+                .industry(Industry.RETAIL)
+                .website("https://www.queens.com")
+                .headquarters("Addis Ababa, Ethiopia")
+                .build();
+    }
+
     public static Job createTestJob(final Company company) {
         return Job.builder()
                 .id(1)
@@ -92,6 +104,18 @@ public class TestDataUtil {
                 .build();
     }
 
+    public static CreateJobDto createTestJobDto(final CompanyDto company) {
+        return CreateJobDto.builder()
+                .id(1)
+                .title("Software Engineer")
+                .companyId(company.getId())
+                .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
+                .type(JobType.FULL_TIME)
+                .workMode(WorkMode.HYBRID)
+                .description("Software Engineer with focus in System Engineering")
+                .build();
+    }
+
     public static Job createTestJob2(final Company company) {
         return Job.builder()
                 .id(2)
@@ -102,6 +126,31 @@ public class TestDataUtil {
                 .type(JobType.PART_TIME)
                 .workMode(WorkMode.HYBRID)
                 .status(JobStatus.ACTIVE)
+                .description("Part time accountant needed in entry level experience.")
+                .build();
+    }
+
+    public static CreateJobDto createTestJobDto2(final CompanyDto company) {
+        return CreateJobDto.builder()
+                .id(2)
+                .title("Accountant")
+                .companyId(company.getId())
+                .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
+                .type(JobType.PART_TIME)
+                .workMode(WorkMode.HYBRID)
+                .description("Part time accountant needed in entry level experience.")
+                .build();
+    }
+
+    public static UpdateJobDto createTestUpdateJobDto2(final CompanyDto company) {
+        return UpdateJobDto.builder()
+                .id(2)
+                .title("Accountant")
+                .companyId(company.getId())
+                .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
+                .type(JobType.PART_TIME)
+                .workMode(WorkMode.HYBRID)
+                .status(JobStatus.CLOSED)
                 .description("Part time accountant needed in entry level experience.")
                 .build();
     }
