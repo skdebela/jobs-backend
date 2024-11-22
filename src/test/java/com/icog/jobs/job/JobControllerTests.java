@@ -73,6 +73,14 @@ public class JobControllerTests {
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.company.id").value(testJob.getCompanyId())
         ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.company.name").value(testCompany.getName())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.company.industry").value(testCompany.getIndustry().toString())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.company.website").value(testCompany.getWebsite())
+        ).andExpect(
+                MockMvcResultMatchers.jsonPath("$.company.headquarters").value(testCompany.getHeadquarters())
+        ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.experienceLevel").value(testJob.getExperienceLevel().toString())
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.type").value(testJob.getType().toString())

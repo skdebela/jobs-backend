@@ -37,8 +37,7 @@ public class JobService {
     }
 
     public JobResponseDto save(CreateJobDto createJobDto) {
-        Company company = companyRepository.findById(createJobDto.getCompanyId()).
-                orElseThrow(() -> new IllegalArgumentException("Invalid Company Id: " + createJobDto.getCompanyId()));
+        Company company = companyRepository.findById(createJobDto.getCompanyId()).get();
 
         Job job = jobMapper.mapFromCreate(createJobDto);
         job.setCompany(company);
@@ -48,6 +47,9 @@ public class JobService {
     }
 
     public JobResponseDto createJob(CreateJobDto createJobDto) {
+        Company company = companyRepository.findById(createJobDto.getCompanyId()).
+                orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Company not found."));
+
         if (isDuplicate(createJobDto)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "A similar job already exists.");
         }
