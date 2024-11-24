@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Table(name = "job")
 public class Job {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String title;
