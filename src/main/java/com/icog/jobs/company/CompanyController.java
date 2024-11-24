@@ -1,13 +1,14 @@
 package com.icog.jobs.company;
 
-import com.icog.jobs.Mapper;
 import com.icog.jobs.company.dtos.CompanyDto;
+import com.icog.jobs.company.dtos.CreateUpdateCompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.company.models.Industry;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,11 @@ import java.util.stream.Collectors;
 @RestController
 public class CompanyController {
     private final CompanyService companyService;
-    private final Mapper<Company, CompanyDto> companyMapper;
+    private final CompanyMapper companyMapper;
 
 
-    public CompanyController(CompanyService companyService, Mapper<Company, CompanyDto> companyMapper) {
+    @Autowired
+    public CompanyController(CompanyService companyService, CompanyMapper companyMapper) {
         this.companyService = companyService;
         this.companyMapper = companyMapper;
     }
@@ -36,7 +38,7 @@ public class CompanyController {
             @ApiResponse(responseCode = "404", description = "Invalid input.")
     })
     @PostMapping(path = "api/companies")
-    ResponseEntity<CompanyDto> createCompany(@Valid @RequestBody CompanyDto companyDto) {
+    ResponseEntity<CompanyDto> createCompany(@Valid @RequestBody CreateUpdateCompanyDto companyDto) {
         CompanyDto savedCompanyDto = companyService.createCompany(companyDto);
         return new ResponseEntity<>(savedCompanyDto, HttpStatus.CREATED);
     }
@@ -97,7 +99,7 @@ public class CompanyController {
     @PutMapping(path = "/api/companies/{id}")
     public ResponseEntity<CompanyDto> fullUpdateCompany(
             @PathVariable("id") Integer id,
-            @Valid @RequestBody CompanyDto companyDto
+            @Valid @RequestBody CreateUpdateCompanyDto companyDto
     ) {
         CompanyDto savedCompanyDto = companyService.update(id, companyDto);
         return new ResponseEntity<>(savedCompanyDto, HttpStatus.OK);

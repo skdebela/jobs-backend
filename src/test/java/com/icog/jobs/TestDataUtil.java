@@ -5,6 +5,7 @@ import com.icog.jobs.application.enums.EducationLevel;
 import com.icog.jobs.application.enums.Gender;
 import com.icog.jobs.application.models.Application;
 import com.icog.jobs.company.dtos.CompanyDto;
+import com.icog.jobs.company.dtos.CreateUpdateCompanyDto;
 import com.icog.jobs.company.models.Company;
 import com.icog.jobs.company.models.Industry;
 import com.icog.jobs.job.dtos.CreateJobDto;
@@ -60,9 +61,8 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static CompanyDto createTestCompanyDto() {
-        return CompanyDto.builder()
-                .id(1)
+    public static CreateUpdateCompanyDto createTestCompanyDto() {
+        return CreateUpdateCompanyDto.builder()
                 .name("Amazon")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.amazon.com")
@@ -70,9 +70,8 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static CompanyDto createTestCompany2Dto() {
-        return CompanyDto.builder()
-                .id(2)
+    public static CreateUpdateCompanyDto createTestCompany2Dto() {
+        return CreateUpdateCompanyDto.builder()
                 .name("Google")
                 .industry(Industry.TECHNOLOGY)
                 .website("https://www.google.com")
@@ -80,9 +79,8 @@ public class TestDataUtil {
                 .build();
     }
 
-    public static CompanyDto createTestCompany4Dto() {
-        return CompanyDto.builder()
-                .id(4)
+    public static CreateUpdateCompanyDto createTestCompany4Dto() {
+        return CreateUpdateCompanyDto.builder()
                 .name("Queen's Supermarket")
                 .industry(Industry.RETAIL)
                 .website("https://www.queens.com")

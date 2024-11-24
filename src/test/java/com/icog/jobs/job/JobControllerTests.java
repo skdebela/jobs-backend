@@ -4,11 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icog.jobs.TestDataUtil;
 import com.icog.jobs.company.CompanyService;
 import com.icog.jobs.company.dtos.CompanyDto;
-import com.icog.jobs.company.models.Company;
+import com.icog.jobs.company.dtos.CreateUpdateCompanyDto;
 import com.icog.jobs.job.dtos.CreateJobDto;
 import com.icog.jobs.job.dtos.JobResponseDto;
 import com.icog.jobs.job.dtos.UpdateJobDto;
-import com.icog.jobs.job.models.Job;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -40,10 +39,10 @@ public class JobControllerTests {
 
     @Test
     public void testThatCreateJobsReturnsHttp201Created() throws Exception {
-        CompanyDto testCompany = TestDataUtil.createTestCompanyDto();
-        testCompany = companyService.save(testCompany);
+        CreateUpdateCompanyDto testCreateUpdateCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto testCompanyDto = companyService.save(testCreateUpdateCompanyDto);
 
-        CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompany);
+        CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompanyDto);
         String testJobJson = objectMapper.writeValueAsString(testJob);
 
         mockMvc.perform(
@@ -57,8 +56,8 @@ public class JobControllerTests {
 
     @Test
     public void testThatCreateJobReturnsJob() throws Exception {
-        CompanyDto testCompany = TestDataUtil.createTestCompanyDto();
-        testCompany = companyService.save(testCompany);
+        CreateUpdateCompanyDto testCreateUpdateCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto testCompany = companyService.save(testCreateUpdateCompanyDto);
 
         CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompany);
         String testJobJson = objectMapper.writeValueAsString(testJob);
@@ -103,10 +102,10 @@ public class JobControllerTests {
 
     @Test
     public void testThatGetJobsReturnsListOfJobs() throws Exception {
-        CompanyDto company = TestDataUtil.createTestCompanyDto();
-        company = companyService.save(company);
+        CreateUpdateCompanyDto company = TestDataUtil.createTestCompanyDto();
+        CompanyDto companyDto = companyService.save(company);
 
-        CreateJobDto job = TestDataUtil.createTestJobDto(company);
+        CreateJobDto job = TestDataUtil.createTestJobDto(companyDto);
         jobService.save(job);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/jobs")
@@ -129,10 +128,10 @@ public class JobControllerTests {
 
     @Test
     public void testThatGetJobReturn200OkWhenJobExists() throws Exception {
-        CompanyDto company = TestDataUtil.createTestCompanyDto();
-        company = companyService.save(company);
+        CreateUpdateCompanyDto company = TestDataUtil.createTestCompanyDto();
+        CompanyDto companyDto = companyService.save(company);
 
-        CreateJobDto job = TestDataUtil.createTestJobDto(company);
+        CreateJobDto job = TestDataUtil.createTestJobDto(companyDto);
         jobService.save(job);
 
         mockMvc.perform(
@@ -153,10 +152,10 @@ public class JobControllerTests {
 
     @Test
     public void testThatGetJobReturnsJobWhenJobExists() throws Exception {
-        CompanyDto company = TestDataUtil.createTestCompanyDto();
-        company = companyService.save(company);
+        CreateUpdateCompanyDto company = TestDataUtil.createTestCompanyDto();
+        CompanyDto companyDto = companyService.save(company);
 
-        CreateJobDto job = TestDataUtil.createTestJobDto(company);
+        CreateJobDto job = TestDataUtil.createTestJobDto(companyDto);
         jobService.save(job);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/jobs/" + job.getId())
@@ -180,16 +179,16 @@ public class JobControllerTests {
     // update
     @Test
     public void testThatUpdateJobsReturnsHttp201Created() throws Exception {
-        CompanyDto testCompany1 = TestDataUtil.createTestCompanyDto();
-        testCompany1 = companyService.save(testCompany1);
+        CreateUpdateCompanyDto testCompany1 = TestDataUtil.createTestCompanyDto();
+        CompanyDto testCompany1Dto = companyService.save(testCompany1);
 
-        CreateJobDto testJob1 = TestDataUtil.createTestJobDto(testCompany1);
+        CreateJobDto testJob1 = TestDataUtil.createTestJobDto(testCompany1Dto);
         jobService.save(testJob1);
 
-        CompanyDto testCompany2 = TestDataUtil.createTestCompany2Dto();
-        testCompany2 = companyService.save(testCompany2);
+        CreateUpdateCompanyDto testCompany2 = TestDataUtil.createTestCompany2Dto();
+        CompanyDto testCompany2Dto = companyService.save(testCompany2);
 
-        CreateJobDto testJob2 = TestDataUtil.createTestJobDto2(testCompany2);
+        CreateJobDto testJob2 = TestDataUtil.createTestJobDto2(testCompany2Dto);
         String testJobJson2 = objectMapper.writeValueAsString(testJob2);
 
         mockMvc.perform(
@@ -203,10 +202,10 @@ public class JobControllerTests {
 
     @Test
     public void testThatUpdateJobReturn404NotFoundWhenJobDoesNotExist() throws Exception {
-        CompanyDto testCompany2 = TestDataUtil.createTestCompany2Dto();
-        testCompany2 = companyService.save(testCompany2);
+        CreateUpdateCompanyDto testCompany2 = TestDataUtil.createTestCompany2Dto();
+        CompanyDto testCompany2Dto = companyService.save(testCompany2);
 
-        CreateJobDto testJob2 = TestDataUtil.createTestJobDto(testCompany2);
+        CreateJobDto testJob2 = TestDataUtil.createTestJobDto(testCompany2Dto);
         String testJobJson2 = objectMapper.writeValueAsString(testJob2);
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/api/jobs/" + 1)
@@ -219,12 +218,12 @@ public class JobControllerTests {
 
     @Test
     public void testThatUpdateJobReturnsJob() throws Exception {
-        CompanyDto testCompany1 = TestDataUtil.createTestCompanyDto();
-        testCompany1 = companyService.save(testCompany1);
-        CreateJobDto testJob1 = TestDataUtil.createTestJobDto(testCompany1);
+        CreateUpdateCompanyDto testCompany1 = TestDataUtil.createTestCompanyDto();
+        CompanyDto testCompany1Dto = companyService.save(testCompany1);
+        CreateJobDto testJob1 = TestDataUtil.createTestJobDto(testCompany1Dto);
         JobResponseDto savedTestJob1 = jobService.save(testJob1);
 
-        UpdateJobDto testJob2 = TestDataUtil.createTestUpdateJobDto2(testCompany1);
+        UpdateJobDto testJob2 = TestDataUtil.createTestUpdateJobDto2(testCompany1Dto);
 
         String testJobJson2 = objectMapper.writeValueAsString(testJob2);
 
@@ -262,10 +261,10 @@ public class JobControllerTests {
 
     @Test
     public void testThatDeleteJobReturnsHttpStatus204NoContentForExistingJob() throws Exception {
-        CompanyDto testCompany = TestDataUtil.createTestCompanyDto();
-        testCompany = companyService.save(testCompany);
+        CreateUpdateCompanyDto testCompany = TestDataUtil.createTestCompanyDto();
+        CompanyDto testCompanyDto = companyService.save(testCompany);
 
-        CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompany);
+        CreateJobDto testJob = TestDataUtil.createTestJobDto(testCompanyDto);
         JobResponseDto savedJob = jobService.save(testJob);
 
         mockMvc.perform(
