@@ -51,7 +51,7 @@ public class Application {
     private String coverLetter;
 
     @Enumerated(EnumType.STRING)
-    private ApplicationStatus status;
+    private ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     //TODO: cvUrl
     //TODO: otherDocumentsUrl

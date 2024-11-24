@@ -16,9 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateJobDto {
-
-    Integer id;
-
     @NotBlank(message = "Title must not be blank.")
     @Size(min = 2, max = 100, message = "Title must not exceed 100 characters.")
     private String title;

@@ -104,7 +104,6 @@ public class TestDataUtil {
 
     public static CreateJobDto createTestJobDto(final CompanyDto company) {
         return CreateJobDto.builder()
-                .id(1)
                 .title("Software Engineer")
                 .companyId(company.getId())
                 .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
@@ -130,7 +129,6 @@ public class TestDataUtil {
 
     public static CreateJobDto createTestJobDto2(final CompanyDto company) {
         return CreateJobDto.builder()
-                .id(2)
                 .title("Accountant")
                 .companyId(company.getId())
                 .experienceLevel(ExperienceLevel.ENTRY_LEVEL)
