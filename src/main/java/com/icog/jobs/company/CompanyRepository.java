@@ -11,5 +11,7 @@ import java.util.List;
 public interface CompanyRepository extends JpaRepository<Company, Integer> {
     List<Company> findByIndustry(Industry industry);
 
+    Boolean existsByWebsite(String website);
+
     Boolean existsByNameAndIndustry(String name, Industry industry);
 }

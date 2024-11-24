@@ -39,7 +39,10 @@ public class CompanyService {
     }
 
     public Boolean isExisting(CreateUpdateCompanyDto companyDto) {
-        return companyRepository.existsByNameAndIndustry(companyDto.getName(), companyDto.getIndustry()) ;
+        return companyRepository.existsByNameAndIndustry(companyDto.getName(), companyDto.getIndustry())
+                ||
+                companyRepository.existsByWebsite(companyDto.getWebsite())
+                ;
     }
 
 
