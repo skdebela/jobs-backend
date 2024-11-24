@@ -19,6 +19,18 @@ public class ApplicationMapper{
     }
 
     public Application mapFromCreate(CreateApplicationDto createApplicationDto) {
-        return modelMapper.map(createApplicationDto, Application.class);
+        Application application = new Application();
+
+        application.setApplicantName(createApplicationDto.getApplicantName());
+        application.setApplicantEmail(createApplicationDto.getApplicantEmail());
+        application.setApplicantPhone(createApplicationDto.getApplicantPhone());
+        application.setApplicantAddress(createApplicationDto.getApplicantAddress());
+        application.setApplicantBirthDate(createApplicationDto.getApplicantBirthDate());
+        application.setApplicantGender(createApplicationDto.getApplicantGender());
+        application.setApplicantEducationLevel(createApplicationDto.getApplicantEducationLevel());
+        application.setApplicantExperienceLevel(createApplicationDto.getApplicantExperienceLevel());
+        application.setCoverLetter(createApplicationDto.getCoverLetter());
+
+        return application;
     }
 }
