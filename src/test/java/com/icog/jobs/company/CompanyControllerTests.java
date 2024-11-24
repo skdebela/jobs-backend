@@ -1,13 +1,11 @@
 package com.icog.jobs.company;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icog.jobs.TestDataUtil;
 import com.icog.jobs.company.dtos.CompanyDto;
-import com.icog.jobs.company.models.Company;
+import com.icog.jobs.company.dtos.CreateUpdateCompanyDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -35,7 +33,7 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatCreateCompanySuccessfullyReturnHttp201Created() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
         String testCompanyJson = objectMapper.writeValueAsString(testCompanyDto);
 
         mockMvc.perform(
@@ -50,7 +48,7 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatCreateCompanySuccessfullyReturnCreatedCompany() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
         String testCompanyJson = objectMapper.writeValueAsString(testCompanyDto);
 
         mockMvc.perform(
@@ -81,10 +79,10 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatGetCompanySuccessfullyReturnHttp200OkIfCompanyExist() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
-        companyService.save(testCompanyDto);
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CompanyDto savedCompany = companyService.save(testCompanyDto);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/companies/" + testCompanyDto.getId())
+                MockMvcRequestBuilders.get("/api/companies/" + savedCompany.getId())
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
@@ -92,7 +90,7 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatGetCompanySuccessfullyReturnCompanyIfCompanyExist() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
         CompanyDto savedTestCompany = companyService.save(testCompanyDto);
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/companies/" + savedTestCompany.getId())
@@ -111,9 +109,9 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatGetCompanyByIndustrySuccessfullyReturnCompanyWhenCompanyExist() throws Exception {
-        CompanyDto testCompany1Dto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompany1Dto = TestDataUtil.createTestCompanyDto();
         companyService.save(testCompany1Dto);
-        CompanyDto testCompany4Dto = TestDataUtil.createTestCompany4Dto();
+        CreateUpdateCompanyDto testCompany4Dto = TestDataUtil.createTestCompany4Dto();
         companyService.save(testCompany4Dto);
 
         mockMvc.perform(
@@ -137,7 +135,7 @@ public class CompanyControllerTests {
     //TODO: test full update controller
     @Test
     public void testThatFullUpdateCompanySuccessfullyReturnHttp404WhenAuthorDoesNotExist() throws Exception {
-        CompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
+        CreateUpdateCompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
         String testCompany2DtoJson = objectMapper.writeValueAsString(testCompany2Dto);
 
         mockMvc.perform(
@@ -150,10 +148,10 @@ public class CompanyControllerTests {
     }
     @Test
     public void testThatFullUpdateCompanySuccessfullyReturnHttp200WhenAuthorExist() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
         CompanyDto savedTestCompany = companyService.save(testCompanyDto);
 
-        CompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
+        CreateUpdateCompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
         String testCompany2DtoJson = objectMapper.writeValueAsString(testCompany2Dto);
 
         mockMvc.perform(
@@ -167,10 +165,10 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatFullUpdateCompanySuccessfullyReturnUpdatedCompany() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
         CompanyDto savedTestCompany = companyService.save(testCompanyDto);
 
-        CompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
+        CreateUpdateCompanyDto testCompany2Dto = TestDataUtil.createTestCompany2Dto();
         String testCompany2DtoJson = objectMapper.writeValueAsString(testCompany2Dto);
 
         mockMvc.perform(
@@ -201,7 +199,7 @@ public class CompanyControllerTests {
 
     @Test
     public void testThatDeleteCompanyReturnsHttpStatus204ForExistingCompanies() throws Exception {
-        CompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
+        CreateUpdateCompanyDto testCompanyDto = TestDataUtil.createTestCompanyDto();
         CompanyDto savedTestCompany = companyService.save(testCompanyDto);
 
         mockMvc.perform(
