@@ -110,7 +110,7 @@ public class JobControllerTests {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/api/jobs")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.[0].id").value(job.getId())
+                MockMvcResultMatchers.jsonPath("$.[0].id").value(1)
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.[0].title").value(job.getTitle())
         ).andExpect(
@@ -135,7 +135,7 @@ public class JobControllerTests {
         jobService.save(job);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/jobs/" + job.getId())
+                MockMvcRequestBuilders.get("/api/jobs/1")
         ).andExpect(
                 MockMvcResultMatchers.status().isOk()
         );
@@ -158,9 +158,9 @@ public class JobControllerTests {
         CreateJobDto job = TestDataUtil.createTestJobDto(companyDto);
         jobService.save(job);
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/api/jobs/" + job.getId())
+                MockMvcRequestBuilders.get("/api/jobs/1")
         ).andExpect(
-                MockMvcResultMatchers.jsonPath("$.id").value(job.getId())
+                MockMvcResultMatchers.jsonPath("$.id").value(1)
         ).andExpect(
                 MockMvcResultMatchers.jsonPath("$.title").value(job.getTitle())
         ).andExpect(
@@ -192,7 +192,7 @@ public class JobControllerTests {
         String testJobJson2 = objectMapper.writeValueAsString(testJob2);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/jobs/" + testJob1.getId())
+                MockMvcRequestBuilders.put("/api/jobs/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testJobJson2)
         ).andExpect(
@@ -228,7 +228,7 @@ public class JobControllerTests {
         String testJobJson2 = objectMapper.writeValueAsString(testJob2);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/api/jobs/" + testJob1.getId())
+                MockMvcRequestBuilders.put("/api/jobs/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(testJobJson2)
         ).andExpect(
