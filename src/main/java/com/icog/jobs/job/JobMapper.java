@@ -27,9 +27,13 @@ public class JobMapper{
     }
 
     public Job mapFromCreate(CreateJobDto createJobDto) {
-        Company company = companyService.findOne(createJobDto.getCompanyId()).get();
-        Job job = modelMapper.map(createJobDto, Job.class);
-        job.setCompany(company);
+        Job job = new Job();
+
+        job.setTitle(createJobDto.getTitle());
+        job.setExperienceLevel(createJobDto.getExperienceLevel());
+        job.setType(createJobDto.getType());
+        job.setWorkMode(createJobDto.getWorkMode());
+        job.setDescription(createJobDto.getDescription());
 
         return job;
     }
