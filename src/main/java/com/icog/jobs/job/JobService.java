@@ -55,6 +55,7 @@ public class JobService {
         }
 
         Job job = jobMapper.mapFromCreate(createJobDto);
+        job.setCompany(company);
         Job savedJob = jobRepository.save(job);
 
         return jobMapper.mapToResponse(savedJob);
