@@ -30,6 +30,7 @@ public class Job {
     @JoinColumn(name = "company_id")
     private Company company;
 
+    @Builder.Default
     private LocalDateTime postedAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
@@ -42,6 +43,7 @@ public class Job {
     private WorkMode workMode;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private JobStatus status = JobStatus.ACTIVE;
 
     private String description;

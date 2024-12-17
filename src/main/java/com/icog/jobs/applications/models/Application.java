@@ -51,6 +51,7 @@ public class Application {
     private String coverLetter;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     //TODO: cvUrl
