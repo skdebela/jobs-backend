@@ -1,20 +1,20 @@
 package com.icog.jobs;
 
-import com.icog.jobs.application.enums.ApplicationStatus;
-import com.icog.jobs.application.enums.EducationLevel;
-import com.icog.jobs.application.enums.Gender;
-import com.icog.jobs.application.models.Application;
-import com.icog.jobs.company.dtos.CompanyDto;
-import com.icog.jobs.company.dtos.CreateUpdateCompanyDto;
-import com.icog.jobs.company.models.Company;
-import com.icog.jobs.company.models.Industry;
-import com.icog.jobs.job.dtos.CreateJobDto;
-import com.icog.jobs.job.dtos.UpdateJobDto;
-import com.icog.jobs.job.enums.ExperienceLevel;
-import com.icog.jobs.job.enums.JobStatus;
-import com.icog.jobs.job.enums.JobType;
-import com.icog.jobs.job.enums.WorkMode;
-import com.icog.jobs.job.models.Job;
+import com.icog.jobs.applications.enums.ApplicationStatus;
+import com.icog.jobs.applications.enums.EducationLevel;
+import com.icog.jobs.applications.enums.Gender;
+import com.icog.jobs.applications.models.Application;
+import com.icog.jobs.companies.dtos.CompanyDto;
+import com.icog.jobs.companies.dtos.CreateUpdateCompanyDto;
+import com.icog.jobs.companies.models.Company;
+import com.icog.jobs.companies.models.Industry;
+import com.icog.jobs.jobs.dtos.CreateJobDto;
+import com.icog.jobs.jobs.dtos.UpdateJobDto;
+import com.icog.jobs.jobs.enums.ExperienceLevel;
+import com.icog.jobs.jobs.enums.JobStatus;
+import com.icog.jobs.jobs.enums.JobType;
+import com.icog.jobs.jobs.enums.WorkMode;
+import com.icog.jobs.jobs.models.Job;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
